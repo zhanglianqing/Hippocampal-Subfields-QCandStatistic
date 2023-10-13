@@ -40,6 +40,7 @@ def generate_template(out_dir,out_path):
         '''
         dict = {"DesignName":"ExampleDesign1",
                 "group":"diagnosis",
+                "filter":"Age>=18",
                 "covariates":"ICV__age__sex",
                 "x_list":"YBOCS1__YBOCS2",
                 "inter_terms":"diagnosis*age__diagnosis*sex",
@@ -79,27 +80,29 @@ def run_R_script(Rcmd, args):
         :return:
         '''
         import subprocess
-        out_dir = osj(args[5],args[0])
-        os.mkdir(out_dir,0o777)
-        args[5] = out_dir
+        out_dir = osj(args[6],args[0])
+        os.mkdir(out_dir)
+        args[6] = out_dir
         rscript_path =os.path.join(os.path.split(os.path.realpath(__file__))[0], 'main.R')
-        print('start r session')
-        print(' '.join([Rcmd, "--vanilla",rscript_path]+args[1:]))
-        subprocess.call([Rcmd, "--vanilla",rscript_path]+args[1:])
+        print('start r session: {}'.format(args[0]))
 
-def Wrap_Statistic(design_csv,Rcmd):
+        args[2] = '"{}"'.format(args[2])
+        cmd = ' '.join([Rcmd, "--vanilla",rscript_path]+args[1:])
+        print(cmd)
+        #subprocess.call([Rcmd, "--vanilla",rscript_path]+args[1:])
+        os.system(cmd)
+
+def Wrap_Statistic(design_csv,Rcmd,num_cores):
         '''
         run statistic design
         :param Rcmd: string, cmd used to call Rscript.
         :param design_csv: str, path to design.csv
         :return:
         '''
-        import multiprocessing
         from joblib import Parallel, delayed
 
         args_list = get_design(design_csv)
 
-        num_cores = multiprocessing.cpu_count()
         Parallel(n_jobs=num_cores)(delayed(run_R_script)(Rcmd,args) for args in args_list)
 
 

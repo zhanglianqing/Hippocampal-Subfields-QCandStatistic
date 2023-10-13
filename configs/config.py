@@ -34,7 +34,14 @@ def make_cfg_args():
     parser.add_argument('--output',type=str, metavar='PATH', help='path to output directory')
     parser.add_argument('--design',type=str, metavar='PATH', help='path to design.csv')
     parser.add_argument('--Rcmd',default='Rscript',type=str,help='commend to run Rscript. e.g. C:/PROGRA~1/R/R-41~1.1/bin/Rscript')
+    parser.add_argument('--n_cpus',default='all',type=str,help='number of cores for processing')
+    parser.add_argument('--no_plot',action="store_false",help="don't generate qa plot,just generate volume table")
     args = parser.parse_args()
     assert args.task_name in cfg.task_total, 'error task name ({})'.format(args.task_name)
+    import multiprocessing
+    if args.n_cpus == 'all':
+        args.n_cpus = multiprocessing.cpu_count()
+    else:
+        args.n_cpus = int(args.n_cpus)
 
     return cfg.clone(), args

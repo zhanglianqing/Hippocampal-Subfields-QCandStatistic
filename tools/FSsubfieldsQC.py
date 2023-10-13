@@ -4,8 +4,7 @@ import pandas as pd
 from .utils import show_ROI
 import matplotlib.pyplot as plt
 from joblib import Parallel, delayed
-import multiprocessing
-num_cores = multiprocessing.cpu_count()
+
 
 def find_latest_version(filelist):
     versions = [re.search(r'v\d+',filename).group() for filename in filelist]
@@ -62,7 +61,7 @@ def get_HA_filelist(root,subject,logfile):
             volume_files_pattern = '[lr]h.\w+Volumes-T\w+.{}.txt'.format(version)
             volume_files = find_file_list(os.listdir(mri_dir), volume_files_pattern)
 
-            img_files_pattern = '[lr]h.hippoAmygLabels-T1.v20.[CH]\w+.FSvoxelSpace.mgz'.format(version)
+            img_files_pattern = '[lr]h.hippoAmygLabels-T1.{}.[CH]\w+.FSvoxelSpace.mgz'.format(version)
             img_files = find_file_list(os.listdir(mri_dir),img_files_pattern)
 
             if len(volume_files) != 4 or len(img_files) != 4:
@@ -75,9 +74,26 @@ def get_HA_filelist(root,subject,logfile):
                                'region':'HA',
                                'version':version,
                                'mri_dir':mri_dir,
+                               'root_dir':root,
                                'volume':[os.path.join(mri_dir,i) for i in volume_files],
                                'img':[os.path.join(mri_dir,i) for i in img_files]}
                 return output_dict
+
+def get_eTIV(root,subject):
+    '''
+
+    :param root: str, /path/to/$SUBJECTS_DIR
+    :param subject: subject ID
+    :return: float, eTIV or Estimated Total Intracranial Volume in mm3
+    '''
+    aseg_path = os.path.join(root,subject,'stats/aseg.stats')
+    with open (aseg_path,'r') as f:
+        aseg_content = f.readlines()
+    # Measure EstimatedTotalIntraCranialVol, eTIV, Estimated Total Intracranial Volume, 1573720.795071, mm^3
+    eTIV_line = [i for i in aseg_content if '# Measure EstimatedTotalIntraCranialVol' in i][0]
+    eTIV = eTIV_line.split(',')[-2]
+    eTIV = float(eTIV)
+    return eTIV
 
 def extract_HA_SF_volume(in_dict):
     '''
@@ -86,7 +102,11 @@ def extract_HA_SF_volume(in_dict):
     :param in_dict: output from get_HA_filelist or get_Thalamic_filelist
     :return: pd.DataFrame, volume outcomes from a single subject/session
     '''
-    session_data = pd.DataFrame({'Subject': in_dict['subject'],'QA':0}, index=['volume'])
+    #get eTIV
+    eTIV = get_eTIV(root=in_dict['root_dir'], subject=in_dict['subject'])
+
+    session_data = pd.DataFrame({'Subject': in_dict['subject'],'QA':0,'eTIV':eTIV}, index=['volume'])
+
     filelists = in_dict['volume']
     for filepath in filelists:
         side = re.search('[lr]h',filepath).group()
@@ -131,7 +151,7 @@ def plot_subfield(in_dict,outpath):
         print('{}: QA plot generated!'.format(in_dict['subject']))
 
 
-def post_SF_segment(root,outpath = None, QA = True):
+def post_SF_segment(root, num_cores, outpath = None, QA = True):
     # set output directory
     if outpath is None:
         outpath = os.path.join(root,'Segment_HA_QA')
@@ -156,7 +176,6 @@ def post_SF_segment(root,outpath = None, QA = True):
         f.write(r"# comment out lines that don't need")
         f.write('\n')
 
-    #subjects_dict = [get_HA_filelist(root,i,logfile) for i in subjects]
     subjects_dict =Parallel(n_jobs=num_cores)(delayed(get_HA_filelist)(root,i,logfile) for i in subjects)
     subjects_dict = list(filter(None,subjects_dict))
     SF_volume = pd.DataFrame()
