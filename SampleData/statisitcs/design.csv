@@ -1,0 +1,12 @@
+DesignName,ExampleDesign1,ExampleDesign2
+group,diagnosis2,diagnosis3
+covariates,ICV__age__sex,ICV__age__sex
+x_list,YBOCS1__YBOCS2,YBOCS1__YBOCS2
+inter_terms,diagnosis2*age__diagnosis2*sex,diagnosis3*age__diagnosis3*sex
+out_dir,/data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs,/data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs
+data_path,/data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs/merged_data.csv,/data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs/merged_data.csv
+pic_size_box,3__7,3__7
+legend.position.box,none,none
+BoxColorSetting,none,none
+pic_size_cor,7__3,7__3
+legend.position.cor,top,top

@@ -1,0 +1,4 @@
+#! /bin/bash
+export SUBJECTS_DIR=D:\hmrrc\Lmri\SampleData
+# comment out lines that don't need
+recon-all -s statisitcs

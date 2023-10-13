@@ -1,0 +1,13 @@
+DesignName,Whole_eTIV,Whole_eTIV_Age,Whole_eTIV_Age_Sex
+group,Group,Group,Group
+filter,none,none,none
+covariates,eTIV,eTIV__Age,eTIV__Age__Sex
+x_list,none,Age,Age
+inter_terms,Group*Age__Group*Sex,Group*Sex,none
+out_dir,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic
+data_path,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic/merged_data.csv,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic/merged_data.csv,/data/Plateau_ChengBan/preproc_freesurfer/Segment_HA_QA/statistic/merged_data.csv
+pic_size_box,3__7,3__7,3__7
+legend.position.box,none,none,none
+BoxColorSetting,none,none,none
+pic_size_cor,7__3,7__3,7__3
+legend.position.cor,top,top,top

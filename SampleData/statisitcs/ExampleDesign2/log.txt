@@ -1,0 +1,8 @@
+[1] "Reading data from: /data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs/merged_data.csv"
+[1] "saving outputs to /data/shared/Hippocampal-Subfields-QCandStatistic/SampleData/statisitcs/ExampleDesign2"
+[1] "Analyzing GLM design: diagnosis3+ICV+age+sex,with group:diagnosis3"
+[1] " "
+[1] "start: interaction analysis"
+[1] "testing interaction with design:"
+[1] "diagnosis3+ICV+age+sex+diagnosis3*age+diagnosis3*sex"
+[1] "flag:lh"
